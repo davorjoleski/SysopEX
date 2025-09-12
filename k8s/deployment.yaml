@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sysopExapp
+  namespace: sysopExapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sysopExapp
+  template:
+    metadata:
+      labels:
+        app: sysopExapp
+    spec:
+      containers:
+      - name: app
+        image: sysopex123.azurecr.io/sysopexapp:v1
+
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: DATABASE_URL
+        - name: AZURE_STORAGE_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: blob-secret
+              key: connectionstring
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8000
+          initialDelaySeconds: 15
+          periodSeconds: 20

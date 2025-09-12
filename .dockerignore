@@ -1,0 +1,59 @@
+# Git
+.git
+.gitignore
+README.md
+
+# Docker
+.docker
+Dockerfile*
+docker-compose*
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.pytest_cache
+nosetests.xml
+.venv
+.env
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs
+
+# Testing
+tests/
+test_*
+
+# CI/CD
+.github/
+terraform/
+k8s/
+
+# Documentation
+docs/
+*.md
