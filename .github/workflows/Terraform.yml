@@ -1,14 +1,13 @@
 name: Terraform Azure Provision
-# GitHub Actions pipeline that runs on push to the terraform folder.
-# It will initialize Terraform, run plan, then apply changes automatically.
 
 on:
   push:
     paths:
       - 'terraform/**'
       - '.github/workflows/Terraform.yml'
-
-  workflow_dispatch:  # Optional: allows manual run
+    branches:
+      - master
+  workflow_dispatch:
 
 jobs:
   terraform:
@@ -17,41 +16,28 @@ jobs:
 
     defaults:
       run:
-        working-directory: terraform  # All Terraform commands are run from terraform/ folder
-
-    env:
-      # Azure Service Principal credentials
-      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-
-      # Terraform input variables from secrets
-      TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
-      TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
-      TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-      TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+        working-directory: terraform
 
     steps:
-      # 1️⃣ Checkout repository
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # 2️⃣ Install Terraform
+      # 🔑 Додаден чекор за Azure автентикација
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.7.0  # Specify the Terraform version you want
+          terraform_version: 1.7.0
 
-      # 3️⃣ Terraform Init
       - name: Terraform Init
         run: terraform init -reconfigure
 
-
-        # 4️⃣ Terraform Plan
       - name: Terraform Plan
         run: terraform plan
 
-      # 5️⃣ Terraform Apply
       - name: Terraform Apply
         run: terraform apply -auto-approve
