@@ -6,40 +6,34 @@ on:
       - 'terraform/**'
     branches:
       - master
-  workflow_dispatch:   # 👈 опционално, можеш рачно да го пуштиш
+  workflow_dispatch:
 
 jobs:
   terraform:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./terraform  # Set the working directory
+        working-directory: ./terraform
 
     steps:
-      # Checkout repo
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # Install Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.12.2   # или која и да користиш
+          terraform_version: 1.6.6
 
-      # Azure Login
       - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Terraform Init
       - name: Terraform Init
         run: terraform init
 
-      # Terraform Plan
       - name: Terraform Plan
         run: terraform plan
 
-      # Terraform Apply
       - name: Terraform Apply
         run: terraform apply -auto-approve
