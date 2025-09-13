@@ -6,7 +6,7 @@ on:
   push:
     paths:
       - 'terraform/**'
-      - '.github/workflows/terraform.yml'
+      - '.github/workflows/Terraform.yml'
 
   workflow_dispatch:  # Optional: allows manual run
 
