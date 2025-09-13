@@ -1,48 +1,48 @@
 name: Terraform Azure Provision
-
+# GitHub Actions pipeline that runs on push to the terraform folder.
+# It will initialize Terraform, run plan, then apply changes automatically.
 on:
   push:
     paths:
       - 'terraform/**'
-      - '.github/workflows/Terraform.yml'
-    branches:
-      - master
-  workflow_dispatch:
-
+      - '.github/workflows/terraform.yml'
 jobs:
   terraform:
     name: 'Terraform Plan and Apply'
     runs-on: ubuntu-latest
-
     defaults:
       run:
-        working-directory: terraform
+        working-directory: terraform # All terraform commands are run from terraform/ folder
 
     env:
-      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID}}
       ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
+      TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
+      TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+      TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
 
-      - name: Azure CLI Login
-        run:
-            az login --service-principal -u "${{ secrets.ARM_CLIENT_ID }}" -p "${{ secrets.ARM_CLIENT_SECRET }}" --tenant "${{ secrets.ARM_TENANT_ID }}" --output none
-            az account set --subscription "${{ secrets.ARM_SUBSCRIPTION_ID }}"
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.7.0
+    - name: Checkout repo
+      uses: actions/checkout@v3  # Pulls code from GitHub repo
 
-      - name: Terraform Init
-        run: terraform init -reconfigure
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.7.0 #Specifies Terraform version
 
-      - name: Terraform Plan
-        run: terraform plan
+    - name: Terraform Init
+      run: terraform init # Initializes backend and provider plugins
 
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
+
+    - name: Terraform Plan
+      run: terraform plan # Shows proposed infrastructure changes
+
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve # Applies the changes without prompt
+
