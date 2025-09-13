@@ -2,45 +2,51 @@ name: CI/CD to AKS
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - master
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+    - name: Checkout repo
+      uses: actions/checkout@v4
 
-    # Login to Azure
+    # 🔑 Login to Azure
     - name: Azure Login
-      uses: azure/login@v1
+      uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    # Build and Push to ACR
+    # 🐳 Build & Push Docker image to ACR
     - name: Build and Push Image
-      uses: azure/docker-login@v1
+      uses: docker/build-push-action@v5
       with:
-        login-server: ${{ secrets.ACR_LOGIN_SERVER }}
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
 
-    - run: |
-        docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/sysopexapp:v1 .
-        docker push ${{ secrets.ACR_LOGIN_SERVER }}/sysopexapp:v1
+        file: Dockerfile
+        push: true
+        tags: sysopex123.azurecr.io/sysopexapp:v1
 
-    # Set AKS context
+
+    # 🔑 Set AKS credentials
     - name: Get AKS Credentials
-      uses: azure/aks-set-context@v2
-      with:
-        resource-group: ${{ secrets.AKS_RG }}
-        cluster-name: ${{ secrets.AKS_NAME }}
+      run: |
+        az aks get-credentials \
+          --resource-group SysOpsEX\
+          --name SysOpsEx-aks \
+          --overwrite-existing
 
-    # Deploy to AKS
-    - name: Deploy to Kubernetes
-      uses: azure/k8s-deploy@v4
-      with:
-        manifests: |
-          k8s/deployment.yaml
-          k8s/secret.yaml
+
+
+    # 🚀 Deploy App + Service + PodDisruptionBudget
+    - name: Deploy Application
+      run: |
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
+        
+
+#    # ✅ Verify rollout
+#    - name: Verify App Rollout
+#      run: |
+#        kubectl rollout status deployment/my-app -n default

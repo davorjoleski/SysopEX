@@ -19,9 +19,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
 
 
-  role_based_access_control {
-    enabled = true
-  }
 
   network_profile {
     network_plugin = "azure"
