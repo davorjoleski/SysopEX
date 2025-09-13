@@ -21,6 +21,7 @@ venv/
 
 # Docker
 *.tar
+.idea/workspace.xml
 
 #Terraform
 # Local Terraform directories and files
