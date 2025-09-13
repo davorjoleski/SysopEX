@@ -45,9 +45,10 @@ jobs:
 
       # 3️⃣ Terraform Init
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -backend=false
 
-      # 4️⃣ Terraform Plan
+
+        # 4️⃣ Terraform Plan
       - name: Terraform Plan
         run: terraform plan
 
