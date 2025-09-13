@@ -10,9 +10,11 @@ jobs:
   terraform:
     name: 'Terraform Plan and Apply'
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: terraform # All terraform commands are run from terraform/ folder
+
 
     env:
       ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
