@@ -5,7 +5,7 @@ on:
   push:
     paths:
       - 'terraform/**'
-      - '.github/workflows/terraform.yml'
+      - '.github/workflows/Terraform.yml'
 jobs:
   terraform:
     name: 'Terraform Plan and Apply'
