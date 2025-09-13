@@ -45,7 +45,7 @@ jobs:
 
       # 3️⃣ Terraform Init
       - name: Terraform Init
-        run: terraform init -backend=false
+        run: terraform init -reconfigure
 
 
         # 4️⃣ Terraform Plan
