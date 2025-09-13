@@ -2,6 +2,8 @@ name: Terraform Deploy
 
 on:
   push:
+    paths:
+      - 'terraform/**'
     branches:
       - master
   workflow_dispatch:   # 👈 опционално, можеш рачно да го пуштиш
