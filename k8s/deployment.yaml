@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: sysopex123.azurecr.io/sysopexapp:v1
+        image: sysopsex123.azurecr.io/sysopexapp:v1
 
         ports:
         - containerPort: 8000

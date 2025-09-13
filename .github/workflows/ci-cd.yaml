@@ -19,6 +19,8 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+    - name: Login to ACR
+      run: az acr login --name sysopsex123 #name of ACR
     # 🐳 Build & Push Docker image to ACR
     - name: Build and Push Image
       uses: docker/build-push-action@v5
@@ -26,7 +28,7 @@ jobs:
 
         file: Dockerfile
         push: true
-        tags: sysopex123.azurecr.io/sysopexapp:v1
+        tags: sysopsex123.azurecr.io/sysopexapp:v1
 
 
     # 🔑 Set AKS credentials
