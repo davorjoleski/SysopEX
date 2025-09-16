@@ -12,12 +12,12 @@ spec:
       labels:
         app: sysopExapp
     spec:
-
+      imagePullSecrets:
+        - name: acr-secret
       containers:
       - name: app
         image: sysopsex123.azurecr.io/sysopexapp:v1
-        imagePullSecrets:
-          - name: acr-secret
+
         ports:
         - containerPort: 8000
         env:
