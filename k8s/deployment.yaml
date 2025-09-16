@@ -12,6 +12,7 @@ spec:
       labels:
         app: sysopExapp
     spec:
+
       imagePullSecrets:
         - name: acr-secret
       containers:
