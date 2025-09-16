@@ -7,3 +7,23 @@ resource "azurerm_container_registry" "acr" {
 
 }
 
+resource "kubernetes_secret" "acr_secret" {
+  metadata {
+    name      = "acr-secret"
+    namespace = "default"
+  }
+
+  type = "kubernetes.io/dockerconfigjson"
+
+  data = {
+    ".dockerconfigjson" = jsonencode({
+      auths = {
+        "${azurerm_container_registry.acr.login_server}" = {
+          username = azurerm_container_registry.acr.admin_username
+          password = azurerm_container_registry.acr.admin_password
+          email    = "example@intertec.io"
+        }
+      }
+    })
+  }
+}
