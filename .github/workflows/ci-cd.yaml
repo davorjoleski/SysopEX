@@ -3,8 +3,7 @@ name: CI/CD to AKS
 on:
   push:
     paths:
-      - 'k8s/**'
-      - '.github/workflows/ci-cd.yaml.yml'
+
     branches:
       - master
 
