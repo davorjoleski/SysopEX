@@ -31,7 +31,9 @@ jobs:
 
         file: Dockerfile
         push: true
-        tags: sysopsex123.azurecr.io/sysopexapp:v1
+        tags: sysopex123.azurecr.io/sysopexapp:v1
+
+
 
 
     # 🔑 Set AKS credentials
