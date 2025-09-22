@@ -10,3 +10,15 @@ resource "azurerm_role_assignment" "acr_pull" {
  skip_service_principal_aad_check = true
 }
 
+resource "kubernetes_secret" "db_secret" {
+  metadata {
+    name      = "db-secret"
+    namespace = "default"
+  }
+  data = {
+    POSTGRES_USER     = var.postgres_admin
+    POSTGRES_PASSWORD = data.azurerm_key_vault_secret.postgres_pwd.value
+    POSTGRES_DB       = var.postgres_db_name
+    POSTGRES_HOST     = azurerm_postgresql_flexible_server.postgres.fqdn
+  }
+}

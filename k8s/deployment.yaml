@@ -25,7 +25,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: db-secret
-              key: DATABASE_URL
+              key: POSTGRES_HOST
         - name: AZURE_STORAGE_CONNECTION_STRING
           valueFrom:
             secretKeyRef:
