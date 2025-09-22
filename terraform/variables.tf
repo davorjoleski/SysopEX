@@ -71,3 +71,21 @@ variable "vm_size" {
   type        = string
   default     = "Standard_DS2_v2"
 }
+
+#key vault
+data "azurerm_key_vault" "kv" {
+  name                = "sysops-kv"
+  resource_group_name = azurerm_resource_group.main.name
+}
+
+data "azurerm_key_vault_secret" "postgres_pwd" {
+  name         = "postgres-admin-password"
+  key_vault_id = data.azurerm_key_vault.kv.id
+}
+
+
+variable "postgres_admin_password" {   # <-- NEW variable for secret
+  description = "Postgres admin password (use Key Vault or TF_VAR)"
+  type        = string
+  sensitive   = true
+}

@@ -10,7 +10,7 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
   storage_mb = 32768
 
   administrator_login          = var.postgres_admin
-  administrator_password = "postgresql1@"
+  administrator_password = data.azurerm_key_vault_secret.postgres_pwd.value
 
 
     backup_retention_days = 7
@@ -24,9 +24,9 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
     ]
   }
 
-  delegated_subnet_id = null # left null for public access - consider VNet integration for prod
+  delegated_subnet_id         = azurerm_subnet.postgres.id# left null for public access - consider VNet integration for prod
 
-  public_network_access_enabled = true
+  public_network_access_enabled = false
 }
 
 resource "azurerm_postgresql_flexible_server_database" "postgres" {
@@ -36,10 +36,3 @@ resource "azurerm_postgresql_flexible_server_database" "postgres" {
   collation           = "en_US.utf8"
 }
 
-# Firewall rule to allow Azure services (and optionally your IP)
-resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure" {
-  name                = "allow_azure"
-  server_id = azurerm_postgresql_flexible_server.postgres.id
-  start_ip_address    = "0.0.0.0"
-  end_ip_address      = "0.0.0.0"
-}

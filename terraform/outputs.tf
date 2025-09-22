@@ -4,6 +4,7 @@ output "resource_group" {
 
 output "acr_login_server" {
   value = azurerm_container_registry.acr.login_server
+  sensitive = true
 }
 
 output "storage_account_name" {
@@ -20,6 +21,8 @@ output "postgres_hostname" {
 
 output "postgres_admin_user" {
   value = azurerm_postgresql_flexible_server.postgres.administrator_login
+    sensitive = true   # <-- mark as sensitive
+
 }
 
 
