@@ -33,7 +33,7 @@ variable "resource_group_name" {
 variable "acr_name" {
   description = "Name for Azure Container Registry (must be globally unique)"
   type        = string
-  default     = "SysOpsEx123"
+  default     = "sysopex123"
 }
 
 variable "storage_account_name" {
