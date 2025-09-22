@@ -84,8 +84,4 @@ data "azurerm_key_vault_secret" "postgres_pwd" {
 }
 
 
-variable "postgres_admin_password" {   # <-- NEW variable for secret
-  description = "Postgres admin password (use Key Vault or TF_VAR)"
-  type        = string
-  sensitive   = true
-}
+
