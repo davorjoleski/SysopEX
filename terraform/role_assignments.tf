@@ -16,9 +16,21 @@ resource "kubernetes_secret" "db_secret" {
     namespace = "default"
   }
   data = {
-    POSTGRES_USER     = var.postgres_admin
-    POSTGRES_PASSWORD = data.azurerm_key_vault_secret.postgres_pwd.value
-    POSTGRES_DB       = var.postgres_db_name
-    POSTGRES_HOST     = azurerm_postgresql_flexible_server.postgres.fqdn
+    DB_HOST     = azurerm_postgresql_flexible_server.postgres.fqdn
+    DB_PORT     = "5432"
+    DB_NAME     = var.postgres_db_name
+    DB_USER     = var.postgres_admin
+    DB_PASS     = data.azurerm_key_vault_secret.postgres_pwd.value
+    DATABASE_URL      = "postgresql://${var.postgres_admin}:${data.azurerm_key_vault_secret.postgres_pwd.value}@${azurerm_postgresql_flexible_server.postgres.fqdn}:5432/${var.postgres_db_name}?sslmode=require"
+
+  }
+}
+resource "kubernetes_secret" "blob_secret" {
+  metadata {
+    name      = "blob-secret"
+    namespace = "default"
+  }
+  data = {
+    AZURE_STORAGE_CONNECTION_STRING = azurerm_storage_account.main.primary_blob_connection_string
   }
 }
