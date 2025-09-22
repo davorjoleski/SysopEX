@@ -14,10 +14,17 @@ resource "azurerm_kubernetes_cluster" "aks" {
     os_disk_size_gb = 30
     type       = "VirtualMachineScaleSets"
 
+
+
   }
+   identity {
+      type                      = "UserAssigned"
+      user_assigned_identity_id = azurerm_user_assigned_identity.aks_uai.id
+    }
 
   identity {
     type = "SystemAssigned"
+
   }
 
 
@@ -32,4 +39,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
     environment = "dev"
     project     = "sysopEX-kata"
   }
+}
+resource "azurerm_user_assigned_identity" "aks_uai" {
+  name                = "aks-uai"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
 }
