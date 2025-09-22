@@ -13,8 +13,7 @@ spec:
         app: sysopExapp
     spec:
 
-      imagePullSecrets:
-        - name: acr-secret
+
       containers:
       - name: app
         image: sysopsex123.azurecr.io/sysopexapp:v1
