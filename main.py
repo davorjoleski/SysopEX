@@ -11,6 +11,12 @@ import os
 # Load env vars
 load_dotenv()
 
+def env_or_raise(name):
+    value = os.getenv(name)
+    if not value:
+        raise RuntimeError(f"Missing environment variable: {name}")
+    return value
+
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 DB_NAME = os.getenv("DB_NAME")
@@ -21,17 +27,8 @@ DB_USER_SAFE = quote_plus(DB_USER)
 DB_PASS_SAFE = quote_plus(DB_PASS)
 
 
-def env_or_raise(name):
-    value = os.getenv(name)
-    if not value:
-        raise RuntimeError(f"Missing environment variable: {name}")
-    return value
 
-DB_USER = env_or_raise("DB_USER")
-DB_PASS = env_or_raise("DB_PASS")
-DB_HOST = env_or_raise("DB_HOST")
-DB_PORT = env_or_raise("DB_PORT")
-DB_NAME = env_or_raise("DB_NAME")
+
 
 
 DATABASE_URL = f"postgresql://{DB_USER_SAFE}:{DB_PASS_SAFE}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode=require"
