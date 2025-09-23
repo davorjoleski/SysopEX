@@ -33,6 +33,6 @@ resource "kubernetes_secret" "blob_secret" {
     namespace = "default"
   }
   data = {
-    AZURE_STORAGE_CONNECTION_STRING = azurerm_storage_account.main.primary_blob_connection_string
+    connectionstring = azurerm_storage_account.main.primary_blob_connection_string
   }
 }
