@@ -32,7 +32,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: blob-secret
-              key: connectionstring
+              key: AZURE_STORAGE_CONNECTION_STRING
         readinessProbe:
           httpGet:
             path: /health/ready
