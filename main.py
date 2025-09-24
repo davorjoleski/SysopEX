@@ -1,6 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.responses import RedirectResponse   # 👈 важно
-
+from fastapi.responses import RedirectResponse
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import declarative_base, sessionmaker
 from dotenv import load_dotenv
@@ -8,35 +7,39 @@ from azure.storage.blob import BlobServiceClient
 from urllib.parse import quote_plus
 import os
 
-# Load env vars
+# --- Load environment variables ---
 load_dotenv()
 
-def env_or_raise(name):
+def env_or_raise(name: str) -> str:
+    """Fetch env var or raise a clear error."""
     value = os.getenv(name)
     if not value:
         raise RuntimeError(f"Missing environment variable: {name}")
     return value
 
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASS = os.getenv("DB_PASS")
+# --- DB configuration ---
+DB_HOST = env_or_raise("DB_HOST")
+DB_PORT = env_or_raise("DB_PORT")
+DB_NAME = env_or_raise("DB_NAME")
+DB_USER = env_or_raise("DB_USER")
+DB_PASS = env_or_raise("DB_PASS")
 
-DB_USER_SAFE = quote_plus(DB_USER)
-DB_PASS_SAFE = quote_plus(DB_PASS)
+if not DB_USER or not DB_PASS:
+    raise RuntimeError(f"Missing DB_USER or DB_PASS: {DB_USER=}, {DB_PASS=}")
+
+DB_USER_SAFE = quote_plus(str(DB_USER))
+DB_PASS_SAFE = quote_plus(str(DB_PASS))
 
 
+DATABASE_URL = (
+    f"postgresql://{DB_USER_SAFE}:{DB_PASS_SAFE}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode=require"
+)
 
-
-
-
-DATABASE_URL = f"postgresql://{DB_USER_SAFE}:{DB_PASS_SAFE}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode=require"
-
-AZURE_CONN_STR = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+# --- Azure Blob configuration ---
+AZURE_CONN_STR = env_or_raise("AZURE_STORAGE_CONNECTION_STRING")
 BLOB_CONTAINER = "uploads"
 
-# DB setup
+# --- Database setup ---
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
@@ -47,19 +50,20 @@ class User(Base):
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
 
+# Create tables on startup (for demo; for prod use Alembic migrations)
 Base.metadata.create_all(bind=engine)
 
-# Azure Blob
+# --- Azure Blob client ---
 blob_service = BlobServiceClient.from_connection_string(AZURE_CONN_STR)
 try:
     blob_service.create_container(BLOB_CONTAINER)
 except Exception:
+    # Ignore if container already exists
     pass
 
-# FastAPI app
+# --- FastAPI application ---
 app = FastAPI()
 
-# 👇 root ќе редиректира кон Swagger UI
 @app.get("/")
 def root():
     return RedirectResponse(url="/docs")
@@ -82,7 +86,7 @@ def read_user(user_id: int):
         raise HTTPException(status_code=404, detail="User not found")
     return {"id": user.id, "name": user.name, "email": user.email}
 
-# Files
+# File Upload/Download
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     blob_client = blob_service.get_blob_client(container=BLOB_CONTAINER, blob=file.filename)
