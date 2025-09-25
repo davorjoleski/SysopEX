@@ -1,27 +1,26 @@
-import base64
-
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import RedirectResponse
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import declarative_base, sessionmaker
-from dotenv import load_dotenv
 from azure.storage.blob import BlobServiceClient
 from urllib.parse import quote_plus
 import os
 
-# --- Load environment variables ---
-load_dotenv()
+# --- Load & validate environment variables ---
+def env(name: str) -> str:
+    val = os.getenv(name)
+    if not val:
+        raise RuntimeError(f"Missing environment variable: {name}")
+    return val
 
+DB_HOST = env("DB_HOST")         # e.g. postgr.postgres.database.azure.com
+DB_PORT = env("DB_PORT")         # e.g. 5432
+DB_NAME = env("DB_NAME")         # e.g. postgres
+DB_USER = env("DB_USER")         # e.g. adnim
+DB_PASS = env("DB_PASS")         # e.g. StrongPassword!23@
+AZURE_CONN_STR = env("AZURE_STORAGE_CONNECTION_STRING")
 
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASS = os.getenv("DB_PASS")
-
-if not all([DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS]):
-    raise RuntimeError("Missing one or more database environment variables!")
-
+# --- Build database URL (escape special chars) ---
 DB_USER_SAFE = quote_plus(DB_USER)
 DB_PASS_SAFE = quote_plus(DB_PASS)
 
@@ -29,12 +28,8 @@ DATABASE_URL = (
     f"postgresql://{DB_USER_SAFE}:{DB_PASS_SAFE}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode=require"
 )
 
-# --- Azure Blob configuration ---
-AZURE_CONN_STR = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
-BLOB_CONTAINER = "uploads"
-
 # --- Database setup ---
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 SessionLocal = sessionmaker(bind=engine)
 Base = declarative_base()
 
@@ -44,18 +39,19 @@ class User(Base):
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
 
-# Create tables on startup (for demo; for prod use Alembic migrations)
+# Create tables at startup (for demo only)
 Base.metadata.create_all(bind=engine)
 
 # --- Azure Blob client ---
 blob_service = BlobServiceClient.from_connection_string(AZURE_CONN_STR)
+BLOB_CONTAINER = "uploads"
 try:
     blob_service.create_container(BLOB_CONTAINER)
 except Exception:
     # Ignore if container already exists
     pass
 
-# --- FastAPI application ---
+# --- FastAPI app ---
 app = FastAPI()
 
 @app.get("/")
