@@ -1,3 +1,5 @@
+import base64
+
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import RedirectResponse
 from sqlalchemy import create_engine, Column, Integer, String
@@ -9,34 +11,31 @@ import os
 
 # --- Load environment variables ---
 load_dotenv()
+def decode_env(name: str) -> str:
+    val = os.getenv(name)
+    if not val:
+        raise RuntimeError(f"Missing env var {name}")
+    try:
+        return base64.b64decode(val).decode("utf-8")
+    except Exception:
+        # Ако не е base64, врати ја како string
+        return val
 
-def env_or_raise(name: str) -> str:
-    """Fetch env var or raise a clear error."""
-    value = os.getenv(name)
-    if not value:
-        raise RuntimeError(f"Missing environment variable: {name}")
-    return value
+DB_HOST = decode_env("DB_HOST")
+DB_PORT = decode_env("DB_PORT")
+DB_NAME = decode_env("DB_NAME")
+DB_USER = decode_env("DB_USER")
+DB_PASS = decode_env("DB_PASS")
 
-# --- DB configuration ---
-DB_HOST = env_or_raise("DB_HOST")
-DB_PORT = env_or_raise("DB_PORT")
-DB_NAME = env_or_raise("DB_NAME")
-DB_USER = env_or_raise("DB_USER")
-DB_PASS = env_or_raise("DB_PASS")
-
-if not DB_USER or not DB_PASS:
-    raise RuntimeError(f"Missing DB_USER or DB_PASS: {DB_USER=}, {DB_PASS=}")
-
-DB_USER_SAFE = quote_plus(str(DB_USER))
-DB_PASS_SAFE = quote_plus(str(DB_PASS))
-
+DB_USER_SAFE = quote_plus(DB_USER)
+DB_PASS_SAFE = quote_plus(DB_PASS)
 
 DATABASE_URL = (
     f"postgresql://{DB_USER_SAFE}:{DB_PASS_SAFE}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode=require"
 )
 
 # --- Azure Blob configuration ---
-AZURE_CONN_STR = env_or_raise("AZURE_STORAGE_CONNECTION_STRING")
+AZURE_CONN_STR = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 BLOB_CONTAINER = "uploads"
 
 # --- Database setup ---
