@@ -29,10 +29,3 @@ resource "azurerm_private_dns_zone_virtual_network_link" "aks_link"{
   private_dns_zone_name = azurerm_private_dns_zone.postgres.name
   virtual_network_id = azurerm_virtual_network.main.id
 }
-resource "azurerm_subnet" "aks"{
-
-  name = "aks-subnet"
-  resource_group_name = azurerm_resource_group.main.name
-  virtual_network_name = azurerm_virtual_network.main.name
-  address_prefixes = ["10.0.2.0/24"]
-}
