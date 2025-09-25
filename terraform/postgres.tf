@@ -24,11 +24,11 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
     ]
   }
 
-  delegated_subnet_id         = azurerm_subnet.postgres.id# left null for public access - consider VNet integration for prod
+  //delegated_subnet_id         = azurerm_subnet.postgres.id# left null for public access - consider VNet integration for prod
 
-  public_network_access_enabled = false
+  public_network_access_enabled = true
 
-  private_dns_zone_id = azurerm_private_dns_zone.postgres.id
+ // private_dns_zone_id = azurerm_private_dns_zone.postgres.id
 
 
 }
