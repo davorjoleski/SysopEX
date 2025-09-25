@@ -15,11 +15,16 @@ def decode_env(name: str) -> str:
     val = os.getenv(name)
     if not val:
         raise RuntimeError(f"Missing env var {name}")
-    try:
-        return base64.b64decode(val).decode("utf-8")
-    except Exception:
-        # Ако не е base64, врати ја како string
-        return val
+    # Осигури дека е string
+    if isinstance(val, str):
+        try:
+            # Декодирај ако е base64
+            return base64.b64decode(val).decode("utf-8")
+        except Exception:
+            # Ако не е base64, врати ја како string
+            return val
+    else:
+        raise RuntimeError(f"Env var {name} is not a string: {val}")
 
 DB_HOST = decode_env("DB_HOST")
 DB_PORT = decode_env("DB_PORT")
@@ -27,9 +32,9 @@ DB_NAME = decode_env("DB_NAME")
 DB_USER = decode_env("DB_USER")
 DB_PASS = decode_env("DB_PASS")
 
-DB_USER_SAFE = quote_plus(DB_USER)
-DB_PASS_SAFE = quote_plus(DB_PASS)
-
+# Осигури дека се string пред quote_plus
+DB_USER_SAFE = quote_plus(str(DB_USER))
+DB_PASS_SAFE = quote_plus(str(DB_PASS))
 DATABASE_URL = (
     f"postgresql://{DB_USER_SAFE}:{DB_PASS_SAFE}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode=require"
 )
