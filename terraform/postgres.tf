@@ -28,7 +28,6 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
 
   public_network_access_enabled = false
 
-
   private_dns_zone_id = azurerm_private_dns_zone.postgres.id
 
 
