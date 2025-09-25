@@ -1,3 +1,4 @@
+from dotenv import load_dotenv
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import RedirectResponse
 from sqlalchemy import create_engine, Column, Integer, String
@@ -5,6 +6,8 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from azure.storage.blob import BlobServiceClient
 from urllib.parse import quote_plus
 import os
+
+load_dotenv()
 
 # --- Load & validate environment variables ---
 def env(name: str) -> str:
