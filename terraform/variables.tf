@@ -79,7 +79,7 @@ data "azurerm_key_vault" "kv" {
 }
 
 data "azurerm_key_vault_secret" "postgres_pwd" {
-  name         = "postgres-admin-password"
+  name         = "postgre-pw"
   key_vault_id = data.azurerm_key_vault.kv.id
 }
 
