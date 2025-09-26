@@ -45,7 +45,7 @@ variable "storage_account_name" {
 variable "postgres_admin" {
   description = "Postgres admin username"
   type        = string
-  default     = "adnim@postgr"
+  default     = "adnim"
 }
 
 variable "postgres_db_name" {
