@@ -24,8 +24,8 @@ DB_PASS = env("DB_PASS")         # e.g. StrongPassword!23@
 AZURE_CONN_STR = env("AZURE_STORAGE_CONNECTION_STRING")
 
 # --- Build database URL (escape special chars) ---
-DB_USER_SAFE = quote_plus(DB_USER)
-DB_PASS_SAFE = quote_plus(DB_PASS)
+DB_USER_SAFE = quote_plus(DB_USER.decode() if isinstance(DB_USER, bytes) else str(DB_USER))
+DB_PASS_SAFE = quote_plus(DB_PASS.decode() if isinstance(DB_PASS, bytes) else str(DB_PASS))
 
 DATABASE_URL = (
     f"postgresql://{DB_USER_SAFE}:{DB_PASS_SAFE}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode=require"
