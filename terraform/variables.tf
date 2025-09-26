@@ -51,7 +51,7 @@ variable "postgres_admin" {
 variable "postgres_db_name" {
   description = "Postgres DB name"
   type        = string
-  default     = "postgres"
+  default     = "dameungrr"
 }
 
 variable "aks_name" {
