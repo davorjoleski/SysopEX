@@ -93,3 +93,12 @@ def download_file(filename: str):
     if not blob_client.exists():
         raise HTTPException(status_code=404, detail="File not found")
     return {"url": blob_client.url}
+
+
+@app.get("/health/ready")
+def health_ready():
+    return {"status": "ok"}
+
+@app.get("/health/live")
+def health_live():
+    return {"status": "ok"}
