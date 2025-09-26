@@ -31,7 +31,7 @@ jobs:
 
         file: Dockerfile
         push: true
-        tags: sysopex123.azurecr.io/sysopexapp:v1
+        tags: sysopex123.azurecr.io/sysopexapp:v2
 
 
 

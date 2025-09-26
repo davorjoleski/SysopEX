@@ -16,7 +16,8 @@ spec:
 
       containers:
       - name: app
-        image: sysopex123.azurecr.io/sysopexapp:v1
+        image: sysopex123.azurecr.io/sysopexapp:v2
+        imagePullPolicy: Always
 
 
 
