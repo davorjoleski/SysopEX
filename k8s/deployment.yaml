@@ -55,15 +55,15 @@ spec:
                 name: blob-secret
                 key: AZURE_STORAGE_CONNECTION_STRING
 
-#        readinessProbe:
-#          httpGet:
-#            path: /health/ready
-#            port: 8080
-#          initialDelaySeconds: 5
-#          periodSeconds: 10
-#        livenessProbe:
-#          httpGet:
-#            path: /health/live
-#            port: 8080
-#          initialDelaySeconds: 15
-#          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
