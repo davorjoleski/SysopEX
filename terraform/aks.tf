@@ -6,7 +6,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   default_node_pool {
     name       = "agentpool"
-
+    vnet_subnet_id      = azurerm_subnet.aks.id
     auto_scaling_enabled = true
     min_count = 2
     max_count = 5
@@ -37,6 +37,13 @@ resource "azurerm_kubernetes_cluster" "aks" {
     project     = "sysopEX-kata"
   }
 }
+# Земаме ID на managed vnet што ја креира AKS
+data "azurerm_kubernetes_cluster" "aks_data" {
+  name                = azurerm_kubernetes_cluster.aks.name
+  resource_group_name = azurerm_kubernetes_cluster.aks.resource_group_name
+}
+
+
 resource "azurerm_user_assigned_identity" "aks_uai" {
   name                = "aks-uai"
   resource_group_name = azurerm_resource_group.main.name
