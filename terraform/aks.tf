@@ -5,31 +5,30 @@ resource "azurerm_kubernetes_cluster" "aks" {
   dns_prefix          = "${var.aks_name}-dns"
 
   default_node_pool {
-    name       = "agentpool"
-
+    name               = "agentpool"
+    vm_size            = var.vm_size
+    os_disk_size_gb    = 30
+    type               = "VirtualMachineScaleSets"
     auto_scaling_enabled = true
-    min_count = 2
-    max_count = 5
-    vm_size    = var.vm_size
-    os_disk_size_gb = 30
-    type       = "VirtualMachineScaleSets"
-
-
-
+    min_count          = 2
+    max_count          = 5
   }
-
 
   identity {
     type = "SystemAssigned"
-
   }
 
-
-
+  api_server_access_profile {
+    private_cluster_enabled = true
+  }
 
   network_profile {
-    network_plugin = "azure"
+    network_plugin    = "azure"
+    network_policy    = "azure"
     load_balancer_sku = "standard"
+    service_cidr       = "10.0.0.0/16"
+    dns_service_ip     = "10.0.0.10"
+    docker_bridge_cidr = "172.17.0.1/16"
   }
 
   tags = {
@@ -37,6 +36,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     project     = "sysopEX-kata"
   }
 }
+
 resource "azurerm_user_assigned_identity" "aks_uai" {
   name                = "aks-uai"
   resource_group_name = azurerm_resource_group.main.name
