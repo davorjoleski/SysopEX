@@ -18,9 +18,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     type = "SystemAssigned"
   }
 
-  api_server_access_profile {
-     enable_private_cluster = true
-  }
+    private_cluster_enabled = true
 
   network_profile {
     network_plugin    = "azure"
@@ -28,7 +26,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     load_balancer_sku = "standard"
     service_cidr       = "10.0.0.0/16"
     dns_service_ip     = "10.0.0.10"
-    docker_bridge_cidr = "172.17.0.1/16"
   }
 
   tags = {
