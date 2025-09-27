@@ -19,7 +19,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   api_server_access_profile {
-    private_cluster_enabled = true
+     enable_private_cluster = true
   }
 
   network_profile {
