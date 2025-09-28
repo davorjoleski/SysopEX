@@ -38,3 +38,39 @@ resource "azurerm_private_dns_zone_virtual_network_link" "aks_link"{
   private_dns_zone_name = azurerm_private_dns_zone.postgres.name
   virtual_network_id = azurerm_virtual_network.main.id
 }
+//Bastion
+
+# 🔹 Subnet за Bastion (мора баш вака да се вика!)
+resource "azurerm_subnet" "bastion" {
+  name                 = "AzureBastionSubnet"
+  resource_group_name  = azurerm_resource_group.main.name
+  virtual_network_name = azurerm_virtual_network.main.name
+  address_prefixes     = ["10.0.3.0/27"]    # мора да биде /26 или /27 минимум
+}
+
+# 🔹 Public IP за Bastion
+resource "azurerm_public_ip" "bastion" {
+  name                = "bastion-pip"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
+
+# 🔹 Azure Bastion Host
+resource "azurerm_bastion_host" "main" {
+  name                = "sysopsex-bastion"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+
+  ip_configuration {
+    name                 = "configuration"
+    subnet_id            = azurerm_subnet.bastion.id
+    public_ip_address_id = azurerm_public_ip.bastion.id
+  }
+
+  tags = {
+    environment = "dev"
+    project     = "sysopEX-kata"
+  }
+}
