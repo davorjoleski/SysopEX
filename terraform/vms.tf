@@ -37,7 +37,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
   location            = azurerm_resource_group.main.location
   size                = "Standard_B2s"
   admin_username      = "azureuser"
-  admin_password      = "P@ssword1234!"   # промени
+  admin_password      = data.azurerm_key_vault_secret.adminpw.value  # промени
   network_interface_ids = [
     azurerm_network_interface.vm_nic.id
   ]
