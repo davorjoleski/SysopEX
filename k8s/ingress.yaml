@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sysopex-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: app.example.com     # може да користиш DNS име или да тестираш со IP + Host header
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: sysops-service   # твојот Service (LoadBalancer/ClusterIP/NodePort)
+            port:
+              number: 80
+  # TLS пример (потребен cert-manager или претходно поставен secret)
+  # tls:
+  # - hosts:
+  #   - app.example.com
+  #   secretName: tls-sysopex

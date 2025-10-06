@@ -7,7 +7,7 @@ resource "azurerm_role_assignment" "acr_pull" {
 
   # kubelet identity principal id (object_id) се враќа од ресурсот
   principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
-   skip_service_principal_aad_check = true
+  # skip_service_principal_aad_check = true # off production
     depends_on           = [azurerm_kubernetes_cluster.aks]
 
 }

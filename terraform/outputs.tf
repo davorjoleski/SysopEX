@@ -31,7 +31,7 @@ output "aks_cluster_name" {
   value = azurerm_kubernetes_cluster.aks.name
 }
 
-output "aks_kube_config" {
+output "aks_kube_config" {       #bad fpr security
   # Note: admin_kube_config is a map; do not print tokens in plain text in prod
   value     = azurerm_kubernetes_cluster.aks.kube_admin_config_raw
   sensitive = true
