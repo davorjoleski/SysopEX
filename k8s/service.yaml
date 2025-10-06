@@ -3,7 +3,7 @@ kind: Service
 metadata:
    name: sysops-service
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: sysopExapp
   ports:
